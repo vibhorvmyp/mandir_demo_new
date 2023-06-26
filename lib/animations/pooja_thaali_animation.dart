@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:mandir_demo_new/const/constant.dart';
+
 import 'dart:math' as math;
 
-class CircularPathAnimation extends StatefulWidget {
+class PoojaThaaliAnimation extends StatefulWidget {
+  const PoojaThaaliAnimation({super.key});
+
   @override
-  _CircularPathAnimationState createState() => _CircularPathAnimationState();
+  PoojaThaaliAnimationState createState() => PoojaThaaliAnimationState();
 }
 
-class _CircularPathAnimationState extends State<CircularPathAnimation>
-    with SingleTickerProviderStateMixin {
+class PoojaThaaliAnimationState extends State<PoojaThaaliAnimation>
+    with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -17,7 +21,7 @@ class _CircularPathAnimationState extends State<CircularPathAnimation>
     _controller = AnimationController(
       duration: const Duration(seconds: 5),
       vsync: this,
-    )..repeat(); // repeat the animation
+    )..repeat();
 
     _animation = Tween(begin: 0.0, end: 1.0).animate(_controller);
   }
@@ -43,7 +47,7 @@ class _CircularPathAnimationState extends State<CircularPathAnimation>
               child: child!,
             );
           },
-          child: Image.asset('assets/pooja_thaali.png')),
+          child: Image.asset(Constant.poojaThaaliImgUrl)),
     );
   }
 }

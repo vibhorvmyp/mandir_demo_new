@@ -1,33 +1,31 @@
-import 'dart:math' as math;
-import 'dart:ui';
-
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/physics.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:mandir_demo_new/const/constant.dart';
 
 import 'dart:ui' as ui;
+import 'dart:math' as math;
 
-class FlowersPaint extends StatefulWidget {
-  const FlowersPaint({super.key});
+import 'package:mandir_demo_new/painter/flower.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<FlowersPaint> createState() => _FlowersPaintState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _FlowersPaintState extends State<FlowersPaint>
-    with TickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late Ticker ticker;
-  // final notifier = ValueNotifier(Duration.zero);
 
   final flowerNotifier = ValueNotifier(Duration.zero);
   final bellNotifier = ValueNotifier(Duration.zero);
 
   ui.Image? flower;
 
-  Offset draggablePosition = Offset(0, 0);
-  Offset initialPosition = Offset(0, 0);
+  Offset draggablePosition = const Offset(0, 0);
+  Offset initialPosition = const Offset(0, 0);
 
   final audioPlayer = AudioPlayer();
 
@@ -35,14 +33,13 @@ class _FlowersPaintState extends State<FlowersPaint>
 
   late AnimationController _controller;
   late Animation<double> _animation;
-  Offset _initialPosition = Offset(
+  final Offset _initialPosition = const Offset(
     -30,
     -200,
   );
   Offset _currentPosition = Offset.zero;
 
-  final String audioUrl =
-      'https://dl.sndup.net/m28g/Hanuman%20Ji%20Ki%20Aarti.mp3';
+  final String audioUrl = Constant.aartiAudioUrl;
 
   void playPauseAudio() async {
     if (isPlaying) {
@@ -63,16 +60,13 @@ class _FlowersPaintState extends State<FlowersPaint>
 
     audioPlayer.onPlayerStateChanged.listen((PlayerState state) {
       if (state == PlayerState.playing) {
-        // setState(() {
         isPlaying = true;
-        // });
       } else if (state == PlayerState.paused || state == PlayerState.stopped) {
-        // setState(() {
         isPlaying = false;
-        // });
       }
     });
 
+    //Pooja Thaali Animation
     _controller = AnimationController(
       duration: const Duration(seconds: 10),
       vsync: this,
@@ -85,16 +79,6 @@ class _FlowersPaintState extends State<FlowersPaint>
         _currentPosition = calculateCircularPosition(_animation.value);
       });
     });
-
-    // WidgetsBinding.instance!.addPostFrameCallback((_) {
-    //   // Set the initial position to the middle of the screen
-    //   setState(() {
-    //     _initialPosition = Offset(
-    //       MediaQuery.of(context).size.width / 2,
-    //       MediaQuery.of(context).size.height / 2,
-    //     );
-    //   });
-    // });
   }
 
   Offset calculateCircularPosition(double animationValue) {
@@ -105,6 +89,7 @@ class _FlowersPaintState extends State<FlowersPaint>
     return _initialPosition.translate(x, y);
   }
 
+  //Pooja Thaali
   void _startAnimation() {
     if (_controller.isAnimating) {
       _controller.stop();
@@ -128,11 +113,7 @@ class _FlowersPaintState extends State<FlowersPaint>
     });
   }
 
-  void resetDraggablePosition() {
-    // setState(() {
-    //   draggablePosition = initialPosition;
-    // });
-  }
+  void resetDraggablePosition() {}
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +122,7 @@ class _FlowersPaintState extends State<FlowersPaint>
         children: [
           Positioned.fill(
             child: Image.asset(
-              'assets/hanuman_1.jpg', // Replace with your image path
+              Constant.godImgUrl,
               fit: BoxFit.cover,
             ),
           ),
@@ -155,7 +136,6 @@ class _FlowersPaintState extends State<FlowersPaint>
             ),
           ),
 
-          //Draggable object
           Positioned(
             bottom: 0,
             left: MediaQuery.of(context).size.width / 2 - 100,
@@ -163,16 +143,13 @@ class _FlowersPaintState extends State<FlowersPaint>
               feedback: SizedBox(
                 width: 180,
                 height: 180,
-                child: Image.asset('assets/pooja_thaali.png'),
-                // color: Colors.red.withOpacity(0.7),
+                child: Image.asset(Constant.poojaThaaliImgUrl),
               ),
               onDragStarted: () {
-                // setState(() {
                 initialPosition = Offset(
                   MediaQuery.of(context).size.width / 2 - 50,
                   MediaQuery.of(context).size.height - 100,
                 );
-                // });
               },
               onDragEnd: (_) {
                 resetDraggablePosition();
@@ -192,15 +169,12 @@ class _FlowersPaintState extends State<FlowersPaint>
                     child: child,
                   );
                 },
-                child: Container(
+                child: SizedBox(
                   width: 180,
                   height: 180,
-                  child: Image.asset('assets/pooja_thaali.png'),
+                  child: Image.asset(Constant.poojaThaaliImgUrl),
                 ),
               ),
-              // onDraggableCanceled: (_, __) {
-              //   resetDraggablePosition();
-              // },
             ),
           ),
 
@@ -213,9 +187,9 @@ class _FlowersPaintState extends State<FlowersPaint>
               },
               child: Container(
                 width: 55,
-                padding: EdgeInsets.all(6),
+                padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                    color: Color(0xFFEB0C2E),
+                    color: const Color(0xFFEB0C2E),
                     shape: BoxShape.circle,
                     border: Border.all(width: 2, color: Colors.brown)
                     // color: Colors.amber,
@@ -226,7 +200,6 @@ class _FlowersPaintState extends State<FlowersPaint>
                   size: 35,
                 ),
               ),
-              // icon: Icon(, color: Colors.white),
             ),
           ),
 
@@ -237,15 +210,12 @@ class _FlowersPaintState extends State<FlowersPaint>
               onTap: () => ticker.isTicking ? ticker.stop() : ticker.start(),
               child: Container(
                   width: 52,
-                  padding: EdgeInsets.all(6),
+                  padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
                       color: Colors.brown.shade400.withOpacity(0.9),
                       shape: BoxShape.circle,
-                      border: Border.all(width: 2, color: Colors.brown)
-                      // color: Colors.amber,
-                      ),
-                  child: Image.asset('assets/flower_2.png')),
-              // icon: Icon(, color: Colors.white),
+                      border: Border.all(width: 2, color: Colors.brown)),
+                  child: Image.asset(Constant.flowerImgUrl)),
             ),
           ),
 
@@ -258,30 +228,27 @@ class _FlowersPaintState extends State<FlowersPaint>
               },
               child: Container(
                 width: 55,
-                padding: EdgeInsets.all(6),
+                padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                    color: Color(0xFFEB0C2E),
+                    color: const Color(0xFFEB0C2E),
                     shape: BoxShape.circle,
-                    border: Border.all(width: 2, color: Colors.brown)
-                    // color: Colors.amber,
-                    ),
+                    border: Border.all(width: 2, color: Colors.brown)),
                 child: const Icon(
                   Icons.music_note,
                   color: Colors.white,
                   size: 35,
                 ),
               ),
-              // icon: Icon(, color: Colors.white),
             ),
           ),
 
           // // Swinging bell
-          Positioned(
+          const Positioned(
             top: 100,
             left: 250,
             child: SwingingBellAnimation(),
           ),
-          Positioned(
+          const Positioned(
             top: 100,
             right: 250,
             child: SwingingBellAnimation(),
@@ -290,97 +257,6 @@ class _FlowersPaintState extends State<FlowersPaint>
       ),
     );
   }
-}
-
-class Flower {
-  Flower(int ms, this.rect, List<double> r, Size size)
-      : startTimeMs = ms,
-        scale = lerpDouble(1, 0.5, r[0])!,
-        rotation = math.pi * lerpDouble(-2, 2, r[2])!,
-        xSimulation = FrictionSimulation(0.9, r[2] * size.width,
-            ui.lerpDouble(size.width / 2, -size.width / 2, r[1])!),
-        // ySimulation = GravitySimulation(ui.lerpDouble(10, 1000, r[0])!,
-        //     -rect.height / 2, size.height + rect.height / 2, 100);
-        ySimulation = GravitySimulation(
-            40, -rect.height / 2, size.height + rect.height / 2, 100);
-
-  final int startTimeMs;
-  final Rect rect;
-  final Simulation xSimulation;
-  final Simulation ySimulation;
-  final double scale;
-  final double rotation;
-
-  double x(int ms) => xSimulation.x(_normalizeTime(ms));
-
-  double y(int ms) => ySimulation.x(_normalizeTime(ms));
-
-  bool isDead(int ms) => ySimulation.isDone(_normalizeTime(ms));
-
-  double _normalizeTime(int ms) =>
-      (ms - startTimeMs) / Duration.millisecondsPerSecond;
-
-  RSTransform transform(int ms, Size size) {
-    final translateY = y(ms);
-    return RSTransform.fromComponents(
-      translateX: x(ms),
-      translateY: translateY,
-      anchorX: rect.width / 2,
-      anchorY: rect.height / 2,
-      rotation: rotation * translateY / size.height,
-      scale: scale,
-    );
-  }
-}
-
-class FallingFlowersPainter extends CustomPainter {
-  final ui.Image? flower;
-  final ValueNotifier<Duration> notifier;
-  final imagePaint = Paint();
-  final backgroundPaint = Paint()..color = Colors.transparent;
-  final random = math.Random();
-  final flowers = <Flower>[];
-  int nextReport = 0;
-
-  static const flowerRects = [
-    Rect.fromLTRB(000, 0, 103, 140),
-    Rect.fromLTRB(103, 0, 217, 140),
-    Rect.fromLTRB(217, 0, 312, 140),
-    Rect.fromLTRB(312, 0, 410, 140),
-  ];
-
-  FallingFlowersPainter(this.flower, this.notifier) : super(repaint: notifier);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    canvas.clipRect(Offset.zero & size);
-    canvas.drawPaint(backgroundPaint);
-    if (flower != null) {
-      final ms = DateTime.now().millisecondsSinceEpoch;
-      if (random.nextDouble() < 1) {
-        // drop new bird
-        flowers.add(Flower(ms, flowerRects[random.nextInt(4)],
-            List.generate(3, (i) => random.nextDouble()), size));
-      }
-
-      final transforms =
-          flowers.map((flower) => flower.transform(ms, size)).toList();
-      final rects = flowers.map((flower) => flower.rect).toList();
-      canvas.drawAtlas(
-          flower!, transforms, rects, null, null, null, imagePaint);
-
-      // dead birds cleanup
-      flowers.removeWhere((flower) => flower.isDead(ms));
-
-      if (ms >= nextReport) {
-        nextReport = ms + 2000;
-        print('flowers population: ${flowers.length}');
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(FallingFlowersPainter oldDelegate) => false;
 }
 
 class SwingingBellAnimation extends StatefulWidget {
@@ -404,7 +280,7 @@ class SwingingBellAnimationState extends State<SwingingBellAnimation>
     playBellSound();
     _animationController = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 3),
+      duration: const Duration(seconds: 3),
     );
 
     _swingAnimation = Tween<double>(
@@ -423,8 +299,7 @@ class SwingingBellAnimationState extends State<SwingingBellAnimation>
   final player = AudioPlayer();
 
   void playBellSound() async {
-    await player.play(UrlSource(
-        'https://2u039f-a.akamaihd.net/downloads/ringtones/files/mp3/temple-bell-543.mp3'));
+    await player.play(UrlSource(Constant.bellAudioUrl));
   }
 
   @override
@@ -457,58 +332,11 @@ class SwingingBellAnimationState extends State<SwingingBellAnimation>
           );
         },
         child: Image.asset(
-          'assets/bell.png',
+          Constant.bellImgUrl,
           width: 150,
           height: 150,
         ),
       ),
-    );
-  }
-}
-
-class CircularPathAnimation extends StatefulWidget {
-  @override
-  _CircularPathAnimationState createState() => _CircularPathAnimationState();
-}
-
-class _CircularPathAnimationState extends State<CircularPathAnimation>
-    with TickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(seconds: 5),
-      vsync: this,
-    )..repeat(); // repeat the animation
-
-    _animation = Tween(begin: 0.0, end: 1.0).animate(_controller);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: AnimatedBuilder(
-          animation: _animation,
-          builder: (BuildContext context, Widget? child) {
-            final double angle = _animation.value * 2.0 * math.pi;
-            return Transform.translate(
-              offset: Offset(
-                100.0 * math.cos(angle),
-                100.0 * math.sin(angle),
-              ),
-              child: child!,
-            );
-          },
-          child: Image.asset('assets/pooja_thaali.png')),
     );
   }
 }

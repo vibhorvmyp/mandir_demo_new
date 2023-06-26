@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mandir_demo_new/circular_path_animation.dart';
-
-import 'animation_screen.dart';
+import 'package:mandir_demo_new/screens/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +16,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const FlowersPaint(),
+      home: const HomeScreen(),
     );
   }
 }

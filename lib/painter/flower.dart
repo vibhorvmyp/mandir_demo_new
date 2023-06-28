@@ -62,11 +62,13 @@ class FallingFlowersPainter extends CustomPainter {
 
   FallingFlowersPainter(this.flower, this.notifier) : super(repaint: notifier);
 
+  static const maxFlowers = 270;
+
   @override
   void paint(Canvas canvas, Size size) {
     canvas.clipRect(Offset.zero & size);
     canvas.drawPaint(backgroundPaint);
-    if (flower != null) {
+    if (flower != null && flowers.length < maxFlowers) {
       final ms = DateTime.now().millisecondsSinceEpoch;
       if (random.nextDouble() < 1) {
         flowers.add(Flower(ms, flowerRects[random.nextInt(4)],

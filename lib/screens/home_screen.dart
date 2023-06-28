@@ -1,119 +1,23 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:mandir_demo_new/animations/swinging_bell_animation.dart';
 import 'package:mandir_demo_new/const/constant.dart';
-
-import 'dart:ui' as ui;
-import 'dart:math' as math;
+import 'package:mandir_demo_new/controllers/home_controller.dart';
+import 'package:mandir_demo_new/controllers/swinging_bell_controller.dart';
 
 import 'package:mandir_demo_new/painter/flower.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
-  late Ticker ticker;
+class _HomeScreenState extends State<HomeScreen> {
+  final homeController = Get.put(HomeController());
 
-  final flowerNotifier = ValueNotifier(Duration.zero);
-  final bellNotifier = ValueNotifier(Duration.zero);
-
-  ui.Image? flower;
-
-  Offset draggablePosition = const Offset(0, 0);
-  Offset initialPosition = const Offset(0, 0);
-
-  final audioPlayer = AudioPlayer();
-
-  bool isPlaying = false;
-
-  late AnimationController _controller;
-  late Animation<double> _animation;
-  final Offset _initialPosition = const Offset(
-    -30,
-    -200,
-  );
-  Offset _currentPosition = Offset.zero;
-
-  final String audioUrl = Constant.aartiAudioUrl;
-
-  void playPauseAudio() async {
-    if (isPlaying) {
-      audioPlayer.pause();
-    } else {
-      await audioPlayer.play(UrlSource(audioUrl));
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    ticker = Ticker(_tick);
-    rootBundle
-        .load('assets/flower_2.png')
-        .then((data) => decodeImageFromList(data.buffer.asUint8List()))
-        .then(_setSprite);
-
-    audioPlayer.onPlayerStateChanged.listen((PlayerState state) {
-      if (state == PlayerState.playing) {
-        isPlaying = true;
-      } else if (state == PlayerState.paused || state == PlayerState.stopped) {
-        isPlaying = false;
-      }
-    });
-
-    //Pooja Thaali Animation
-    _controller = AnimationController(
-      duration: const Duration(seconds: 10),
-      vsync: this,
-    );
-
-    _animation = Tween(begin: 0.0, end: 1.0).animate(_controller);
-
-    _animation.addListener(() {
-      setState(() {
-        _currentPosition = calculateCircularPosition(_animation.value);
-      });
-    });
-  }
-
-  Offset calculateCircularPosition(double animationValue) {
-    const double radius = 100.0;
-    final double angle = animationValue * 6.5 * math.pi;
-    final double x = radius * math.cos(angle);
-    final double y = radius * math.sin(angle);
-    return _initialPosition.translate(x, y);
-  }
-
-  //Pooja Thaali
-  void _startAnimation() {
-    if (_controller.isAnimating) {
-      _controller.stop();
-    }
-    _controller.reset();
-    _controller.forward();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    audioPlayer.release();
-    audioPlayer.dispose();
-  }
-
-  _tick(Duration d) => flowerNotifier.value = d;
-
-  _setSprite(ui.Image image) {
-    setState(() {
-      flower = image;
-    });
-  }
-
-  void resetDraggablePosition() {}
+  final swingingBellController = Get.put(SwingingBellController());
 
   @override
   Widget build(BuildContext context) {
@@ -130,8 +34,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             child: Container(
               color: Colors.transparent,
               child: CustomPaint(
-                foregroundPainter:
-                    FallingFlowersPainter(flower, flowerNotifier),
+                foregroundPainter: FallingFlowersPainter(
+                    homeController.flower, homeController.flowerNotifier),
               ),
             ),
           ),
@@ -146,26 +50,26 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 child: Image.asset(Constant.poojaThaaliImgUrl),
               ),
               onDragStarted: () {
-                initialPosition = Offset(
+                homeController.initialPosition = Offset(
                   MediaQuery.of(context).size.width / 2 - 50,
                   MediaQuery.of(context).size.height - 100,
                 );
               },
               onDragEnd: (_) {
-                resetDraggablePosition();
+                homeController.resetDraggablePosition();
               },
               onDraggableCanceled: (_, __) {
-                resetDraggablePosition();
+                homeController.resetDraggablePosition();
               },
               childWhenDragging: Container(),
               onDragCompleted: () {
-                resetDraggablePosition();
+                homeController.resetDraggablePosition();
               },
               child: AnimatedBuilder(
-                animation: _animation,
+                animation: homeController.thaaliAnimation,
                 builder: (BuildContext context, Widget? child) {
                   return Transform.translate(
-                    offset: _currentPosition,
+                    offset: homeController.currentPosition,
                     child: child,
                   );
                 },
@@ -183,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             left: 16,
             child: GestureDetector(
               onTap: () {
-                _startAnimation();
+                homeController.startPoojaThaaliAnimation();
               },
               child: Container(
                 width: 55,
@@ -207,7 +111,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             bottom: 120,
             left: 16,
             child: GestureDetector(
-              onTap: () => ticker.isTicking ? ticker.stop() : ticker.start(),
+              onTap: () {
+                if (homeController.ticker.isTicking) {
+                  // homeController.setFlower();
+                  homeController.ticker.stop();
+                  setState(() {});
+                } else {
+                  homeController.ticker.start();
+                  setState(() {});
+                }
+              },
               child: Container(
                   width: 52,
                   padding: const EdgeInsets.all(6),
@@ -224,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             right: 16,
             child: GestureDetector(
               onTap: () {
-                playPauseAudio();
+                homeController.playPauseBgAartiAudio();
               },
               child: Container(
                 width: 55,
@@ -243,99 +156,17 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
 
           // // Swinging bell
-          const Positioned(
+          Positioned(
             top: 100,
             left: 250,
             child: SwingingBellAnimation(),
           ),
-          const Positioned(
+          Positioned(
             top: 100,
             right: 250,
             child: SwingingBellAnimation(),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class SwingingBellAnimation extends StatefulWidget {
-  const SwingingBellAnimation({super.key});
-
-  @override
-  SwingingBellAnimationState createState() => SwingingBellAnimationState();
-}
-
-class SwingingBellAnimationState extends State<SwingingBellAnimation>
-    with TickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _swingAnimation;
-
-  final double _swingAngle = math.pi / 6;
-
-  @override
-  void initState() {
-    super.initState();
-
-    playBellSound();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 3),
-    );
-
-    _swingAnimation = Tween<double>(
-      begin: -_swingAngle,
-      end: _swingAngle,
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
-    );
-
-    _animationController.forward();
-  }
-
-  final player = AudioPlayer();
-
-  void playBellSound() async {
-    await player.play(UrlSource(Constant.bellAudioUrl));
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    player.dispose();
-    super.dispose();
-  }
-
-  void _handleTap() {
-    playBellSound();
-    if (_animationController.isCompleted) {
-      _animationController.reverse();
-    } else {
-      _animationController.forward();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _handleTap,
-      child: AnimatedBuilder(
-        animation: _animationController,
-        builder: (context, child) {
-          return Transform.rotate(
-            angle: _swingAnimation.value *
-                math.sin(_animationController.value * math.pi),
-            child: child,
-          );
-        },
-        child: Image.asset(
-          Constant.bellImgUrl,
-          width: 150,
-          height: 150,
-        ),
       ),
     );
   }

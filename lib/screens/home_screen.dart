@@ -3,12 +3,13 @@ import 'package:get/get.dart';
 import 'package:mandir_demo_new/animations/swinging_bell_animation.dart';
 import 'package:mandir_demo_new/const/constant.dart';
 import 'package:mandir_demo_new/controllers/home_controller.dart';
+import 'package:mandir_demo_new/controllers/pooja_thaali_controller.dart';
 import 'package:mandir_demo_new/controllers/swinging_bell_controller.dart';
 
 import 'package:mandir_demo_new/painter/flower.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({super.key});
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -16,8 +17,19 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final homeController = Get.put(HomeController());
-
   final swingingBellController = Get.put(SwingingBellController());
+  final poojaThaaliController = Get.put(PoojaThaaliController());
+
+  @override
+  void initState() {
+    super.initState();
+    // moveTheBells();
+  }
+
+  // moveTheBells() {
+  //   Future.delayed(Duration(seconds: 1));
+  //   swingingBellController.animationController.forward();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -56,20 +68,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
               onDragEnd: (_) {
-                homeController.resetDraggablePosition();
+                poojaThaaliController.resetDraggablePosition();
               },
               onDraggableCanceled: (_, __) {
-                homeController.resetDraggablePosition();
+                poojaThaaliController.resetDraggablePosition();
               },
               childWhenDragging: Container(),
               onDragCompleted: () {
-                homeController.resetDraggablePosition();
+                poojaThaaliController.resetDraggablePosition();
               },
               child: AnimatedBuilder(
-                animation: homeController.thaaliAnimation,
+                animation: poojaThaaliController.thaaliAnimation,
                 builder: (BuildContext context, Widget? child) {
                   return Transform.translate(
-                    offset: homeController.currentPosition,
+                    offset: poojaThaaliController.currentPosition,
                     child: child,
                   );
                 },
@@ -87,7 +99,8 @@ class _HomeScreenState extends State<HomeScreen> {
             left: 16,
             child: GestureDetector(
               onTap: () {
-                homeController.startPoojaThaaliAnimation();
+                if (poojaThaaliController.controller.isAnimating) {}
+                poojaThaaliController.startPoojaThaaliAnimation();
               },
               child: Container(
                 width: 55,

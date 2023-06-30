@@ -2,8 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
+import 'package:get/get.dart';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
+
+import 'package:mandir_demo_new/controllers/home_controller.dart';
 
 class Flower {
   Flower(int ms, this.rect, List<double> r, Size size)
@@ -45,6 +48,7 @@ class Flower {
 }
 
 class FallingFlowersPainter extends CustomPainter {
+  final homeController = Get.find<HomeController>();
   final ui.Image? flower;
   final ValueNotifier<Duration> notifier;
   final imagePaint = Paint();
@@ -64,12 +68,48 @@ class FallingFlowersPainter extends CustomPainter {
 
   static const maxFlowers = 270;
 
+  // void addFlowers(int count, Size size) {
+  //   final ms = DateTime.now().millisecondsSinceEpoch;
+  //   for (int i = 0; i < count; i++) {
+  //     flowers.add(Flower(
+  //       ms,
+  //       flowerRects[random.nextInt(4)],
+  //       List.generate(3, (i) => random.nextDouble()),
+  //       size,
+  //     ));
+  //   }
+  // }
+
+  // void addFlowersOnButtonPress(Size size) {
+  //   if (homeController.ticker.isTicking) {
+  //     final ms = DateTime.now().millisecondsSinceEpoch;
+  //     for (int i = 0; i < 270; i++) {
+  //       flowers.add(Flower(
+  //         ms,
+  //         flowerRects[random.nextInt(4)],
+  //         List.generate(3, (i) => random.nextDouble()),
+  //         size,
+  //       ));
+  //     }
+  //   }
+  // }
+
   @override
   void paint(Canvas canvas, Size size) {
     canvas.clipRect(Offset.zero & size);
     canvas.drawPaint(backgroundPaint);
     if (flower != null && flowers.length < maxFlowers) {
       final ms = DateTime.now().millisecondsSinceEpoch;
+
+      // if (homeController.startingFlowersFlag.value == true) {
+      //   addFlowers(270, size);
+      // }
+
+      //  if (notifier.value != Duration.zero) {
+      //   addFlowersOnButtonPress(size);
+      //   notifier.value = Duration.zero;
+      // }
+
       if (random.nextDouble() < 1) {
         flowers.add(Flower(ms, flowerRects[random.nextInt(4)],
             List.generate(3, (i) => random.nextDouble()), size));
@@ -81,7 +121,7 @@ class FallingFlowersPainter extends CustomPainter {
       canvas.drawAtlas(
           flower!, transforms, rects, null, null, null, imagePaint);
 
-      flowers.removeWhere((flower) => flower.isDead(ms));
+      // flowers.removeWhere((flower) => flower.isDead(ms));
 
       if (ms >= nextReport) {
         nextReport = ms + 2000;

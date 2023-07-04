@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mandir_demo_new/animations/swinging_bell_animation.dart';
@@ -6,8 +9,6 @@ import 'package:mandir_demo_new/controllers/home_controller.dart';
 import 'package:mandir_demo_new/controllers/pooja_thaali_controller.dart';
 import 'package:mandir_demo_new/controllers/swinging_bell_controller.dart';
 
-import 'package:mandir_demo_new/painter/flower.dart';
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -15,10 +16,86 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   final homeController = Get.put(HomeController());
   final swingingBellController = Get.put(SwingingBellController());
   final poojaThaaliController = Get.put(PoojaThaaliController());
+
+  final List<AnimationController> _controllers = [];
+  final List<Animation<Offset>> _offsetAnimations = [];
+
+  void _addRandomAnimation() {
+    final random = Random();
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final halfScreenHeight = screenHeight / 2;
+
+    for (var i = 0; i < 50; i++) {
+      final controller = AnimationController(
+        duration: Duration(
+            seconds: random.nextInt(7) +
+                9), // Random duration between 2 to 6 seconds
+        vsync: this,
+      );
+      final animation = Tween<Offset>(
+        begin: Offset(random.nextDouble() * screenWidth,
+            -random.nextDouble() * halfScreenHeight),
+        end: Offset(random.nextDouble() * screenWidth,
+            screenHeight + random.nextDouble() * halfScreenHeight),
+      ).animate(controller);
+
+      animation.addListener(() {
+        setState(() {});
+      });
+
+      _controllers.add(controller);
+      _offsetAnimations.add(animation);
+      controller.forward();
+    }
+
+    Timer(Duration(seconds: 10), () {
+      _clearAnimations();
+    });
+  }
+
+  void _clearAnimations() {
+    for (var i = 0; i < _controllers.length; i++) {
+      Timer(Duration(seconds: 10 * (i + 1)), () {
+        _controllers[i].stop();
+        _controllers.removeAt(i);
+        _offsetAnimations.removeAt(i);
+        setState(() {});
+      });
+    }
+  }
+
+  List<Widget> _buildAnimationStack() {
+    List<Widget> stack = [];
+
+    for (var i = 0; i < _offsetAnimations.length; i++) {
+      stack.add(
+        Positioned(
+          left: _offsetAnimations[i].value.dx,
+          top: _offsetAnimations[i].value.dy,
+          child: RotationTransition(
+            turns: Tween(begin: 0.0, end: 8.0).animate(
+              CurvedAnimation(
+                parent: _controllers[i],
+                curve: Interval(0.0, 1.0),
+              ),
+            ),
+            child: Container(
+              width: 32,
+              height: 32,
+              child: Image.asset(Constant.flowerImgUrl),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return stack;
+  }
 
   @override
   void initState() {
@@ -26,10 +103,13 @@ class _HomeScreenState extends State<HomeScreen> {
     // moveTheBells();
   }
 
-  // moveTheBells() {
-  //   Future.delayed(Duration(seconds: 1));
-  //   swingingBellController.animationController.forward();
-  // }
+  @override
+  void dispose() {
+    for (var controller in _controllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,12 +123,12 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           Positioned.fill(
-            child: Container(
-              color: Colors.transparent,
-              child: CustomPaint(
-                foregroundPainter: FallingFlowersPainter(
-                    homeController.flower, homeController.flowerNotifier),
-              ),
+            child: Stack(
+              children: _buildAnimationStack(),
+              // child: CustomPaint(
+              //   foregroundPainter: FallingFlowersPainter(
+              //       homeController.flower, homeController.flowerNotifier),
+              // ),
             ),
           ),
 
@@ -125,14 +205,15 @@ class _HomeScreenState extends State<HomeScreen> {
             left: 16,
             child: GestureDetector(
               onTap: () {
-                if (homeController.ticker.isTicking) {
-                  // homeController.setFlower();
-                  homeController.ticker.stop();
-                  setState(() {});
-                } else {
-                  homeController.ticker.start();
-                  setState(() {});
-                }
+                _addRandomAnimation();
+                // if (homeController.ticker.isTicking) {
+                //   // homeController.setFlower();
+                //   homeController.ticker.stop();
+                //   setState(() {});
+                // } else {
+                //   homeController.ticker.start();
+                //   setState(() {});
+                // }
               },
               child: Container(
                   width: 52,

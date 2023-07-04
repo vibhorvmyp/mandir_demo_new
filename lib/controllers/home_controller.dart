@@ -29,16 +29,6 @@ class HomeController extends GetxController
 
   bool isPlaying = false;
 
-  // RxBool startingFlowersFlag = false.obs;
-
-  // late AnimationController _controller;
-  // late Animation<double> thaaliAnimation;
-  // final Offset _initialPosition = const Offset(
-  //   -30,
-  //   -200,
-  // );
-  // Offset currentPosition = Offset.zero;
-
   final String audioUrl = Constant.aartiAudioUrl;
 
   void playPauseBgAartiAudio() async {
@@ -58,23 +48,6 @@ class HomeController extends GetxController
 
     log(flower.toString());
   }
-
-  //Pooja Thaali
-  // void startPoojaThaaliAnimation() {
-  //   if (_controller.isAnimating) {
-  //     _controller.stop();
-  //   }
-  //   _controller.reset();
-  //   _controller.repeat();
-  // }
-
-  // Offset calculateCircularPosition(double animationValue) {
-  //   const double radius = 100.0;
-  //   final double angle = animationValue * 6.5 * math.pi;
-  //   final double x = radius * math.cos(angle);
-  //   final double y = radius * math.sin(angle);
-  //   return _initialPosition.translate(x, y);
-  // }
 
   void resetDraggablePosition() {}
 
@@ -98,20 +71,6 @@ class HomeController extends GetxController
         isPlaying = false;
       }
     });
-
-    //Pooja Thaali Animation
-    // _controller = AnimationController(
-    //   duration: const Duration(seconds: 10),
-    //   vsync: this,
-    // );
-
-    // thaaliAnimation = Tween(begin: 0.0, end: 1.0).animate(_controller);
-
-    // thaaliAnimation.addListener(() {
-    //   // setState(() {
-    //   currentPosition = calculateCircularPosition(thaaliAnimation.value);
-    //   // });
-    // });
   }
 
   @override

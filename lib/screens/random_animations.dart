@@ -5,14 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:mandir_demo_new/const/constant.dart';
 
 class RandomAnimationStack extends StatefulWidget {
+  const RandomAnimationStack({super.key});
+
   @override
-  _RandomAnimationStackState createState() => _RandomAnimationStackState();
+  RandomAnimationStackState createState() => RandomAnimationStackState();
 }
 
-class _RandomAnimationStackState extends State<RandomAnimationStack>
+class RandomAnimationStackState extends State<RandomAnimationStack>
     with TickerProviderStateMixin {
-  List<AnimationController> _controllers = [];
-  List<Animation<Offset>> _offsetAnimations = [];
+  final List<AnimationController> _controllers = [];
+  final List<Animation<Offset>> _offsetAnimations = [];
 
   @override
   void dispose() {
@@ -47,9 +49,11 @@ class _RandomAnimationStackState extends State<RandomAnimationStack>
     final screenHeight = MediaQuery.of(context).size.height;
     final halfScreenHeight = screenHeight / 2;
 
-    for (var i = 0; i < 45; i++) {
+    for (var i = 0; i < 50; i++) {
       final controller = AnimationController(
-        duration: const Duration(seconds: 4),
+        duration: Duration(
+            seconds: random.nextInt(7) +
+                9), // Random duration between 2 to 6 seconds
         vsync: this,
       );
       final animation = Tween<Offset>(
@@ -84,34 +88,31 @@ class _RandomAnimationStackState extends State<RandomAnimationStack>
     }
   }
 
-  // void _clearAnimations() {
-  //   for (var controller in _controllers) {
-  //     controller.stop();
-  //   }
-  //   _controllers.clear();
-  //   _offsetAnimations.clear();
-  //   // setState(() {});
-  // }
-
   List<Widget> _buildAnimationStack() {
-    // final screenWidth = MediaQuery.of(context).size.width;
-    // final halfScreenHeight = MediaQuery.of(context).size.height / 2;
-
     List<Widget> stack = [];
+
     for (var i = 0; i < _offsetAnimations.length; i++) {
       stack.add(
         Positioned(
           left: _offsetAnimations[i].value.dx,
           top: _offsetAnimations[i].value.dy,
-          child: Image.asset(Constant.flowerImgUrl),
-          // child: Icon(
-          //   Icons.star,
-          //   size: 50,
-          //   color: Colors.yellow,
-          // ),
+          child: RotationTransition(
+            turns: Tween(begin: 0.0, end: 8.0).animate(
+              CurvedAnimation(
+                parent: _controllers[i],
+                curve: Interval(0.0, 1.0),
+              ),
+            ),
+            child: Container(
+              width: 32,
+              height: 32,
+              child: Image.asset(Constant.flowerImgUrl),
+            ),
+          ),
         ),
       );
     }
+
     return stack;
   }
 }

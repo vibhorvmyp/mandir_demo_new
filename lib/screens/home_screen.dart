@@ -30,18 +30,24 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     final screenHeight = MediaQuery.of(context).size.height;
     final halfScreenHeight = screenHeight / 2;
 
-    for (var i = 0; i < 50; i++) {
+    for (var i = 0; i < 25; i++) {
       final controller = AnimationController(
         duration: Duration(
-            seconds: random.nextInt(7) +
-                9), // Random duration between 2 to 6 seconds
+          seconds: random.nextInt(7) + 7,
+        ),
         vsync: this,
       );
+      final horizontalOffset = random.nextDouble() * screenWidth;
+      final verticalOffset = -random.nextDouble() * halfScreenHeight + 300;
       final animation = Tween<Offset>(
-        begin: Offset(random.nextDouble() * screenWidth,
-            -random.nextDouble() * halfScreenHeight),
-        end: Offset(random.nextDouble() * screenWidth,
-            screenHeight + random.nextDouble() * halfScreenHeight),
+        begin: Offset(horizontalOffset, verticalOffset),
+        end: Offset(
+          horizontalOffset +
+              (random.nextDouble() - 0.5) *
+                  screenWidth *
+                  4, //horizontal offset to create diagonal movement
+          screenHeight + random.nextDouble() * halfScreenHeight,
+        ),
       ).animate(controller);
 
       animation.addListener(() {
@@ -68,6 +74,51 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       });
     }
   }
+
+  // void _addRandomAnimation() {
+  //   final random = Random();
+  //   final screenWidth = MediaQuery.of(context).size.width;
+  //   final screenHeight = MediaQuery.of(context).size.height;
+  //   final halfScreenHeight = screenHeight / 2;
+
+  //   for (var i = 0; i < 50; i++) {
+  //     final controller = AnimationController(
+  //       duration: Duration(
+  //           seconds: random.nextInt(7) +
+  //               9), // Random duration between 2 to 6 seconds
+  //       vsync: this,
+  //     );
+  //     final animation = Tween<Offset>(
+  //       begin: Offset(random.nextDouble() * screenWidth,
+  //           -random.nextDouble() * halfScreenHeight),
+  //       end: Offset(random.nextDouble() * screenWidth,
+  //           screenHeight + random.nextDouble() * halfScreenHeight),
+  //     ).animate(controller);
+
+  //     animation.addListener(() {
+  //       setState(() {});
+  //     });
+
+  //     _controllers.add(controller);
+  //     _offsetAnimations.add(animation);
+  //     controller.forward();
+  //   }
+
+  //   Timer(Duration(seconds: 10), () {
+  //     _clearAnimations();
+  //   });
+  // }
+
+  // void _clearAnimations() {
+  //   for (var i = 0; i < _controllers.length; i++) {
+  //     Timer(Duration(seconds: 10 * (i + 1)), () {
+  //       _controllers[i].stop();
+  //       _controllers.removeAt(i);
+  //       _offsetAnimations.removeAt(i);
+  //       setState(() {});
+  //     });
+  //   }
+  // }
 
   List<Widget> _buildAnimationStack() {
     List<Widget> stack = [];
@@ -114,12 +165,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF281119),
       body: Stack(
         children: [
-          Positioned.fill(
-            child: Image.asset(
-              Constant.godImgUrl,
-              fit: BoxFit.cover,
+          Positioned(
+            top: 175,
+            right: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                  border: Border(
+                      top: BorderSide(color: Color(0xFF281119), width: 5))),
+              width: MediaQuery.of(context).size.width,
+              child: Image.asset(
+                Constant.godImgUrl,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           Positioned.fill(
@@ -250,16 +310,24 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
 
           // // Swinging bell
+
           Positioned(
-            top: 100,
-            left: 250,
+            top: 130,
+            left: 280,
             child: SwingingBellAnimation(),
           ),
           Positioned(
-            top: 100,
-            right: 250,
+            top: 130,
+            right: 280,
             child: SwingingBellAnimation(),
           ),
+
+          Positioned(
+              top: 0,
+              child: Container(
+                  // color: Colors.amber,
+                  width: MediaQuery.of(context).size.width,
+                  child: Image.asset(Constant.mandirDesign2))),
         ],
       ),
     );

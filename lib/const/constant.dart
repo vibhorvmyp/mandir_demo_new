@@ -12,4 +12,8 @@ class Constant {
   static const String godImgUrl = 'assets/hanuman_1.jpg';
 
   static const String flowerImgUrl = 'assets/flower_2.png';
+
+  static const String mandirDesign = 'assets/mandir_design.png';
+
+  static const String mandirDesign2 = 'assets/mandir_design2.png';
 }

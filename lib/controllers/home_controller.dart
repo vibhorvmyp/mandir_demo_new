@@ -1,26 +1,26 @@
-import 'dart:developer';
+// import 'dart:developer';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+// import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mandir_demo_new/const/constant.dart';
 
-import 'dart:ui' as ui;
+// import 'dart:ui' as ui;
 // import 'dart:math' as math;
 
 class HomeController extends GetxController
     with GetSingleTickerProviderStateMixin {
-  HomeController() {
-    ticker = Ticker(tick);
-  }
+  // HomeController() {
+  //   ticker = Ticker(tick);
+  // }
 
-  late Ticker ticker;
+  // late Ticker ticker;
 
-  final flowerNotifier = ValueNotifier(Duration.zero);
+  // final flowerNotifier = ValueNotifier(Duration.zero);
 
-  ui.Image? flower;
+  // ui.Image? flower;
 
   Offset draggablePosition = const Offset(0, 0);
   Offset initialPosition = const Offset(0, 0);
@@ -39,15 +39,15 @@ class HomeController extends GetxController
     }
   }
 
-  tick(Duration d) => flowerNotifier.value = d;
+  // tick(Duration d) => flowerNotifier.value = d;
 
-  setFlower(ui.Image image) {
-    // setState(() {
-    flower = image;
-    // });
+  // setFlower(ui.Image image) {
+  //   // setState(() {
+  //   flower = image;
+  //   // });
 
-    log(flower.toString());
-  }
+  //   log(flower.toString());
+  // }
 
   void resetDraggablePosition() {}
 
@@ -55,14 +55,14 @@ class HomeController extends GetxController
   void onInit() {
     super.onInit();
 
-    ticker.start();
+    // ticker.start();
 
-    ticker = Ticker(tick);
+    // ticker = Ticker(tick);
 
-    rootBundle
-        .load('assets/flower_2.png')
-        .then((data) => decodeImageFromList(data.buffer.asUint8List()))
-        .then(setFlower);
+    // rootBundle
+    //     .load('assets/flower_2.png')
+    //     .then((data) => decodeImageFromList(data.buffer.asUint8List()))
+    //     .then(setFlower);
 
     audioPlayer.onPlayerStateChanged.listen((PlayerState state) {
       if (state == PlayerState.playing) {

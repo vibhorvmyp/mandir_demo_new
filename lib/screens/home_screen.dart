@@ -1,4 +1,4 @@
-import 'dart:async';
+// import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -59,62 +59,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       controller.forward();
     }
 
-    Timer(Duration(seconds: 10), () {
-      _clearAnimations();
-    });
+    // Timer(const Duration(seconds: 10), () {
+    //   _clearAnimations();
+
+    //   print('clear function called');
+    // });
   }
-
-  void _clearAnimations() {
-    for (var i = 0; i < _controllers.length; i++) {
-      Timer(Duration(seconds: 10 * (i + 1)), () {
-        _controllers[i].stop();
-        _controllers.removeAt(i);
-        _offsetAnimations.removeAt(i);
-        setState(() {});
-      });
-    }
-  }
-
-  // void _addRandomAnimation() {
-  //   final random = Random();
-  //   final screenWidth = MediaQuery.of(context).size.width;
-  //   final screenHeight = MediaQuery.of(context).size.height;
-  //   final halfScreenHeight = screenHeight / 2;
-
-  //   for (var i = 0; i < 50; i++) {
-  //     final controller = AnimationController(
-  //       duration: Duration(
-  //           seconds: random.nextInt(7) +
-  //               9), // Random duration between 2 to 6 seconds
-  //       vsync: this,
-  //     );
-  //     final animation = Tween<Offset>(
-  //       begin: Offset(random.nextDouble() * screenWidth,
-  //           -random.nextDouble() * halfScreenHeight),
-  //       end: Offset(random.nextDouble() * screenWidth,
-  //           screenHeight + random.nextDouble() * halfScreenHeight),
-  //     ).animate(controller);
-
-  //     animation.addListener(() {
-  //       setState(() {});
-  //     });
-
-  //     _controllers.add(controller);
-  //     _offsetAnimations.add(animation);
-  //     controller.forward();
-  //   }
-
-  //   Timer(Duration(seconds: 10), () {
-  //     _clearAnimations();
-  //   });
-  // }
 
   // void _clearAnimations() {
   //   for (var i = 0; i < _controllers.length; i++) {
   //     Timer(Duration(seconds: 10 * (i + 1)), () {
-  //       _controllers[i].stop();
+  //       // _controllers[i].stop();
   //       _controllers.removeAt(i);
+  //       print('controller removed = ${_controllers[i]}');
+
   //       _offsetAnimations.removeAt(i);
+
   //       setState(() {});
   //     });
   //   }
@@ -132,10 +92,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             turns: Tween(begin: 0.0, end: 8.0).animate(
               CurvedAnimation(
                 parent: _controllers[i],
-                curve: Interval(0.0, 1.0),
+                curve: const Interval(0.0, 1.0),
               ),
             ),
-            child: Container(
+            child: SizedBox(
               width: 32,
               height: 32,
               child: Image.asset(Constant.flowerImgUrl),
@@ -165,14 +125,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF281119),
+      backgroundColor: const Color(0xFF281119),
       body: Stack(
         children: [
           Positioned(
             top: 175,
             right: 0,
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                   border: Border(
                       top: BorderSide(color: Color(0xFF281119), width: 5))),
               width: MediaQuery.of(context).size.width,
@@ -324,7 +284,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
           Positioned(
               top: 0,
-              child: Container(
+              child: SizedBox(
                   // color: Colors.amber,
                   width: MediaQuery.of(context).size.width,
                   child: Image.asset(Constant.mandirDesign2))),
@@ -333,3 +293,51 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 }
+
+
+
+
+  // void _addRandomAnimation() {
+  //   final random = Random();
+  //   final screenWidth = MediaQuery.of(context).size.width;
+  //   final screenHeight = MediaQuery.of(context).size.height;
+  //   final halfScreenHeight = screenHeight / 2;
+
+  //   for (var i = 0; i < 50; i++) {
+  //     final controller = AnimationController(
+  //       duration: Duration(
+  //           seconds: random.nextInt(7) +
+  //               9), // Random duration between 2 to 6 seconds
+  //       vsync: this,
+  //     );
+  //     final animation = Tween<Offset>(
+  //       begin: Offset(random.nextDouble() * screenWidth,
+  //           -random.nextDouble() * halfScreenHeight),
+  //       end: Offset(random.nextDouble() * screenWidth,
+  //           screenHeight + random.nextDouble() * halfScreenHeight),
+  //     ).animate(controller);
+
+  //     animation.addListener(() {
+  //       setState(() {});
+  //     });
+
+  //     _controllers.add(controller);
+  //     _offsetAnimations.add(animation);
+  //     controller.forward();
+  //   }
+
+  //   Timer(Duration(seconds: 10), () {
+  //     _clearAnimations();
+  //   });
+  // }
+
+  // void _clearAnimations() {
+  //   for (var i = 0; i < _controllers.length; i++) {
+  //     Timer(Duration(seconds: 10 * (i + 1)), () {
+  //       _controllers[i].stop();
+  //       _controllers.removeAt(i);
+  //       _offsetAnimations.removeAt(i);
+  //       setState(() {});
+  //     });
+  //   }
+  // }

@@ -4,14 +4,15 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:mandir_demo_new/const/constant.dart';
 
-class RandomAnimationStack extends StatefulWidget {
-  const RandomAnimationStack({super.key});
+class NewFlowersAnimationStack extends StatefulWidget {
+  const NewFlowersAnimationStack({super.key});
 
   @override
-  RandomAnimationStackState createState() => RandomAnimationStackState();
+  NewFlowersAnimationStackState createState() =>
+      NewFlowersAnimationStackState();
 }
 
-class RandomAnimationStackState extends State<RandomAnimationStack>
+class NewFlowersAnimationStackState extends State<NewFlowersAnimationStack>
     with TickerProviderStateMixin {
   final List<AnimationController> _controllers = [];
   final List<Animation<Offset>> _offsetAnimations = [];
@@ -28,14 +29,15 @@ class RandomAnimationStackState extends State<RandomAnimationStack>
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
         onPressed: _addRandomAnimation,
+        child: const Icon(Icons.add),
       ),
       backgroundColor: Colors.white,
       body: Container(
         decoration: BoxDecoration(
             color: Colors.red.shade900,
-            image: DecorationImage(image: AssetImage(Constant.godImgUrl))),
+            image:
+                const DecorationImage(image: AssetImage(Constant.godImgUrl))),
         child: Stack(
           children: _buildAnimationStack(),
         ),
@@ -78,7 +80,7 @@ class RandomAnimationStackState extends State<RandomAnimationStack>
       controller.forward();
     }
 
-    Timer(Duration(seconds: 10), () {
+    Timer(const Duration(seconds: 10), () {
       _clearAnimations();
     });
   }
@@ -106,10 +108,11 @@ class RandomAnimationStackState extends State<RandomAnimationStack>
             turns: Tween(begin: 0.0, end: 8.0).animate(
               CurvedAnimation(
                 parent: _controllers[i],
-                curve: Interval(0.0, 1.0), //maybe can put random values here
+                curve:
+                    const Interval(0.0, 1.0), //maybe can put random values here
               ),
             ),
-            child: Container(
+            child: SizedBox(
               width: 32,
               height: 32,
               child: Image.asset(Constant.flowerImgUrl),
